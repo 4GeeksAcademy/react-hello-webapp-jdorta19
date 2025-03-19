@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from "react-router-dom";
 
-// Crear el contexto
+
 type Contact = {
   id?: number;
   full_name: string;
@@ -21,12 +21,14 @@ const ContactProvider = ({ children }) => {
   const [contacts, setContacts] = useState([]);
   const API_URL = "https://playground.4geeks.com/contact/";
 
+ 
   const fetchContacts = async () => {
     const res = await fetch(API_URL);
     const data = await res.json();
     setContacts(data);
   };
 
+  
   const addContact = async (contact) => {
     await fetch(API_URL, {
       method: "POST",
@@ -36,11 +38,16 @@ const ContactProvider = ({ children }) => {
     fetchContacts();
   };
 
+  
   const deleteContact = async (id) => {
-    await fetch(`${API_URL}${id}`, { method: "DELETE" });
-    fetchContacts();
+   
+    if (id) {
+      await fetch(`${API_URL}${id}/`, { method: "DELETE" });
+      fetchContacts(); 
+    }
   };
 
+  
   useEffect(() => {
     fetchContacts();
   }, []);
@@ -54,6 +61,7 @@ const ContactProvider = ({ children }) => {
 
 const useContacts = () => useContext(ContactContext);
 
+
 const ContactCard = ({ contact }) => {
   const { deleteContact } = useContacts();
 
@@ -63,6 +71,7 @@ const ContactCard = ({ contact }) => {
       <p>{contact.email}</p>
       <p>{contact.phone}</p>
       <p>{contact.address}</p>
+      
       <button onClick={() => deleteContact(contact.id)}>Eliminar</button>
     </div>
   );
